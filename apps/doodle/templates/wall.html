@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"> {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'doodle/main.css' %}">
+    <link rel="shortcut icon" href="{% static 'doodle/favicon.ico' %}">
+    <title>Collabradoodle | Wall</title>
+</head>
+
+<body>
+    <div id="wrapper">
+        <h1>Collabradoodle</h1>
+        <h2>Greetings, {{ request.session.user.first_name }}</h2>
+        <div>
+            <h3>Doodle a Doodle</h3>
+            <a href="/logout"><button>Log Off</button></a>
+            <form action="/doodle" method="POST">
+                {% csrf_token %}
+                <textarea name="new_doodle" class="doodle_field"></textarea>
+                <input type="submit" value="Doodle" class="doodle_submit">
+            </form>
+            {% if messages %}
+                {% for message in messages %}
+                    <h5>{{ message }}</h5>
+                {% endfor %}
+            {% endif %}
+        </div><!--  /.post_doodle -->
+        {% for doodle in doodles %}
+        <div class="doodle">
+            <h3>{{ doodle.doodle_creator.first_name }}</h3>
+            <h5>{{ doodle.created_at }}</h5>
+            <p class="doodle_content">{{ doodle.content }}</p>
+
+            {% if doodle.doodle_creator.id == request.session.user.user_id %}
+                <a href="/destroy/{{ doodle.id }}" class="delete_doodle"><button class="delete_button">Delete Message</button></a>
+            {% endif %}
+        {% endfor %}
+        </div><!--  /.doodle -->
+        {% if not doodles %}
+            <p class="nothing">No Doodles here...</p>
+        {% endif %}
+    </div><!-- /#wrapper  -->
+</body>
+
+</html>
